@@ -46,9 +46,10 @@ class HomePage extends StatelessWidget implements AutoRouteWrapper {
       child: Stack(
         children: [
           AutoTabsScaffold(
-            routes: const [
-              ProductOverviewRoute(),
-              ProductFavoriteRoute(),
+            routes: [
+              const ProductOverviewRoute(),
+              const ProductFavoriteRoute(),
+              ChatOverviewRoute(roomId: '1234'),
             ],
             bottomNavigationBuilder: (context, tabsRouter) {
               return BottomNavigationBar(

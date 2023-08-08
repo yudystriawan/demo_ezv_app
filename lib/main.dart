@@ -1,3 +1,4 @@
+import 'package:demo_ezv_app/features/chat/data/datasources/hive/query_model.dart';
 import 'package:demo_ezv_app/features/products/data/datasources/hive/query_model.dart';
 import 'package:demo_ezv_app/injection.dart';
 import 'package:demo_ezv_app/routes/router.dart';
@@ -9,6 +10,8 @@ Future<void> main() async {
 
   await Hive.initFlutter();
   Hive.registerAdapter(QueryModelAdapter());
+  Hive.registerAdapter(ChatModelAdapter());
+  Hive.registerAdapter(RoomChatModelAdapter());
 
   runApp(const MyApp());
 }

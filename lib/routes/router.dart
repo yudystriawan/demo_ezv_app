@@ -15,6 +15,7 @@ class AppRouter extends $AppRouter {
             initial: true,
           ),
           AutoRoute(page: ProductFavoriteRoute.page),
+          AutoRoute(page: ChatOverviewRoute.page),
         ],
       ),
       AutoRoute(
