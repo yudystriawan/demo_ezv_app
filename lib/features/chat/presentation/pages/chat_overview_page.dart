@@ -62,38 +62,41 @@ class ChatOverviewPage extends StatelessWidget implements AutoRouteWrapper {
         ),
       ],
       child: Scaffold(
-        body: BlocBuilder<ChatLoaderBloc, ChatLoaderState>(
-          buildWhen: (p, c) => p.isLoading != c.isLoading,
-          builder: (context, state) {
-            if (state.messages.isEmpty()) {
-              return const Center(
-                child: Text('Empty'),
+        body: SafeArea(
+          child: BlocBuilder<ChatLoaderBloc, ChatLoaderState>(
+            buildWhen: (p, c) => p.isLoading != c.isLoading,
+            builder: (context, state) {
+              if (state.messages.isEmpty()) {
+                return const Center(
+                  child: Text('Empty'),
+                );
+              }
+
+              final messages = state.messages;
+              return ListView.separated(
+                shrinkWrap: true,
+                itemCount: messages.size,
+                separatorBuilder: (BuildContext context, int index) {
+                  return const SizedBox(
+                    height: 12,
+                  );
+                },
+                itemBuilder: (BuildContext context, int index) {
+                  final message = messages[index];
+                  final isSender = message.createdBy == 'me';
+
+                  return Align(
+                    alignment:
+                        isSender ? Alignment.topRight : Alignment.topLeft,
+                    child: ChatBuble(
+                      isSender: isSender,
+                      message: message,
+                    ),
+                  );
+                },
               );
-            }
-
-            final messages = state.messages;
-            return ListView.separated(
-              shrinkWrap: true,
-              itemCount: messages.size,
-              separatorBuilder: (BuildContext context, int index) {
-                return const SizedBox(
-                  height: 12,
-                );
-              },
-              itemBuilder: (BuildContext context, int index) {
-                final message = messages[index];
-                final isSender = message.createdBy == 'me';
-
-                return Align(
-                  alignment: isSender ? Alignment.topRight : Alignment.topLeft,
-                  child: ChatBuble(
-                    isSender: isSender,
-                    message: message,
-                  ),
-                );
-              },
-            );
-          },
+            },
+          ),
         ),
         bottomNavigationBar: Padding(
           padding: const EdgeInsets.all(8.0),
