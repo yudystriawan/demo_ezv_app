@@ -18,9 +18,15 @@ class ChatRepositoryImpl implements ChatRepository {
   Future<Either<Failure, Unit>> addReaction({
     required String chatId,
     required String reaction,
-  }) {
-    // TODO: implement addReaction
-    throw UnimplementedError();
+  }) async {
+    try {
+      await _localDataSource.addReaction(chatId: chatId, reaction: reaction);
+      return right(unit);
+    } on Failure catch (e) {
+      return left(e);
+    } catch (e) {
+      return left(const Failure.unexpectedError());
+    }
   }
 
   @override

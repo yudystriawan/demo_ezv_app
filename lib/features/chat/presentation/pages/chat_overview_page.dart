@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:chat_bubbles/bubbles/bubble_special_three.dart';
+import 'package:demo_ezv_app/features/chat/presentation/bloc/actor/chat_actor_bloc.dart';
 import 'package:demo_ezv_app/features/chat/presentation/bloc/form/chat_form_bloc.dart';
 import 'package:demo_ezv_app/features/chat/presentation/bloc/loader/chat_loader_bloc.dart';
 import 'package:demo_ezv_app/injection.dart';
@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../shared/toast.dart';
+import '../widgets/chat_buble.dart';
 import '../widgets/chat_form_field.dart';
 
 @RoutePage()
@@ -20,32 +21,49 @@ class ChatOverviewPage extends StatelessWidget implements AutoRouteWrapper {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<ChatFormBloc, ChatFormState>(
-      listenWhen: (p, c) =>
-          p.failureOrSuccessFailure != c.failureOrSuccessFailure,
-      listener: (context, state) {
-        state.failureOrSuccessFailure.fold(
-          () {},
-          (either) => either.fold(
-            (f) => showToast(
-              context,
-              title: const Text('Something went wrong'),
-            ),
-            (_) {
-              context
-                  .read<ChatFormBloc>()
-                  .add(const ChatFormEvent.messageChanged(''));
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<ChatFormBloc, ChatFormState>(
+          listenWhen: (p, c) =>
+              p.failureOrSuccessFailure != c.failureOrSuccessFailure,
+          listener: (context, state) {
+            state.failureOrSuccessFailure.fold(
+              () {},
+              (either) => either.fold(
+                (f) => showToast(
+                  context,
+                  title: const Text('Something went wrong'),
+                ),
+                (_) {
+                  context
+                      .read<ChatFormBloc>()
+                      .add(const ChatFormEvent.messageChanged(''));
 
-              context
-                  .read<ChatLoaderBloc>()
-                  .add(ChatLoaderEvent.fetched(roomId));
-            },
-          ),
-        );
-      },
+                  context
+                      .read<ChatLoaderBloc>()
+                      .add(ChatLoaderEvent.fetched(roomId));
+                },
+              ),
+            );
+          },
+        ),
+        BlocListener<ChatActorBloc, ChatActorState>(
+          listener: (context, state) {
+            state.maybeMap(
+              orElse: () {},
+              addReactionSuccess: (value) {
+                showToast(context, title: const Text('Reaction added'));
+                context
+                    .read<ChatLoaderBloc>()
+                    .add(ChatLoaderEvent.fetched(roomId));
+              },
+            );
+          },
+        ),
+      ],
       child: Scaffold(
         body: BlocBuilder<ChatLoaderBloc, ChatLoaderState>(
-          buildWhen: (p, c) => p.messages != c.messages,
+          buildWhen: (p, c) => p.isLoading != c.isLoading,
           builder: (context, state) {
             if (state.messages.isEmpty()) {
               return const Center(
@@ -55,6 +73,7 @@ class ChatOverviewPage extends StatelessWidget implements AutoRouteWrapper {
 
             final messages = state.messages;
             return ListView.separated(
+              shrinkWrap: true,
               itemCount: messages.size,
               separatorBuilder: (BuildContext context, int index) {
                 return const SizedBox(
@@ -64,13 +83,13 @@ class ChatOverviewPage extends StatelessWidget implements AutoRouteWrapper {
               itemBuilder: (BuildContext context, int index) {
                 final message = messages[index];
                 final isSender = message.createdBy == 'me';
-                var colorScheme = Theme.of(context).colorScheme;
 
-                return BubbleSpecialThree(
-                  text: message.message,
-                  isSender: isSender,
-                  color: isSender ? colorScheme.primary : colorScheme.secondary,
-                  textStyle: const TextStyle(color: Colors.white),
+                return Align(
+                  alignment: isSender ? Alignment.topRight : Alignment.topLeft,
+                  child: ChatBuble(
+                    isSender: isSender,
+                    message: message,
+                  ),
                 );
               },
             );
@@ -89,6 +108,10 @@ class ChatOverviewPage extends StatelessWidget implements AutoRouteWrapper {
                   roomId: roomId,
                 ),
               ),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.delete),
+              ),
             ],
           ),
         ),
@@ -106,6 +129,9 @@ class ChatOverviewPage extends StatelessWidget implements AutoRouteWrapper {
         BlocProvider(
           create: (context) =>
               getIt<ChatLoaderBloc>()..add(ChatLoaderEvent.fetched(roomId)),
+        ),
+        BlocProvider(
+          create: (context) => getIt<ChatActorBloc>(),
         ),
       ],
       child: this,

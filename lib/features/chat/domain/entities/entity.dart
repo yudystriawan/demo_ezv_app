@@ -3,4 +3,3 @@ import 'package:kt_dart/collection.dart';
 
 part 'chat.dart';
 part 'entity.freezed.dart';
-part 'room.dart';

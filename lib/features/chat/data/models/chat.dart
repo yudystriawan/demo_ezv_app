@@ -20,6 +20,7 @@ class ChatModel with _$ChatModel {
       roomId: model.roomId,
       message: model.message,
       createdBy: model.createdBy,
+      reaction: model.reaction,
     );
   }
 
@@ -29,6 +30,7 @@ class ChatModel with _$ChatModel {
       roomId: roomId,
       message: message,
       createdBy: createdBy,
+      reaction: reaction,
     );
   }
 

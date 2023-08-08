@@ -10,20 +10,29 @@ import 'query_model.dart' as local;
 @Injectable(as: ChatLocalDataSource)
 class ChatLocalDataSourceImpl implements ChatLocalDataSource {
   final _messageBox = 'messageBox';
-  final _roomBox = 'roomBox';
 
   Future<Box<local.ChatModel>> _openChatBox() async {
     return Hive.openBox<local.ChatModel>(_messageBox);
   }
 
-  Future<Box<local.RoomChatModel>> _openRoomChatBox() async {
-    return Hive.openBox<local.RoomChatModel>(_roomBox);
-  }
-
   @override
-  Future<void> addReaction({required String chatId, required String reaction}) {
-    // TODO: implement addReaction
-    throw UnimplementedError();
+  Future<void> addReaction({
+    required String chatId,
+    required String reaction,
+  }) async {
+    try {
+      final box = await _openChatBox();
+      final messages = box.toMap();
+
+      for (var message in messages.entries) {
+        if (message.value.id == chatId) {
+          message.value.reaction = reaction;
+          await message.value.save();
+        }
+      }
+    } catch (e) {
+      throw const Failure.unexpectedError();
+    }
   }
 
   @override
