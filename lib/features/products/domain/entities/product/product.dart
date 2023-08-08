@@ -5,6 +5,7 @@ part 'product.freezed.dart';
 
 @freezed
 class Product with _$Product {
+  const Product._();
   factory Product({
     required String id,
     required String title,
@@ -32,4 +33,14 @@ class Product with _$Product {
         thumbnailUrl: '',
         urlImages: const KtList.empty(),
       );
+
+  bool get hasDiscount => discountPercentage >= 0;
+
+  double get discountedPrice {
+    if (discountPercentage == 0) return price;
+
+    final discountedPrice = price - (price * (discountPercentage / 100));
+    final discountedPriceStr = discountedPrice.toStringAsFixed(2);
+    return double.parse(discountedPriceStr);
+  }
 }

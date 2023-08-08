@@ -9,9 +9,6 @@ class AppRouter extends $AppRouter {
       AutoRoute(
         page: ProductOverviewRoute.page,
         initial: true,
-        children: [
-          AutoRoute(page: ProductFavoriteRoute.page),
-        ],
       ),
       AutoRoute(
         page: ProductDetailRoute.page,
