@@ -3,9 +3,11 @@ import 'package:demo_ezv_app/core/errors/failure.dart';
 import 'package:demo_ezv_app/core/usecases/usecase.dart';
 import 'package:demo_ezv_app/features/products/domain/repositories/product_repository.dart';
 import 'package:equatable/equatable.dart';
+import 'package:injectable/injectable.dart';
 
 import '../entities/product/product.dart';
 
+@injectable
 class AddFavorite implements Usecase<Unit, AddFavoriteParams> {
   final ProductRepository _repository;
 

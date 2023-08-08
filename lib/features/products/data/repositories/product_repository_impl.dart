@@ -3,8 +3,10 @@ import 'package:demo_ezv_app/core/errors/failure.dart';
 import 'package:demo_ezv_app/features/products/data/datasources/product_remote_datasource.dart';
 import 'package:demo_ezv_app/features/products/domain/entities/product/product.dart';
 import 'package:demo_ezv_app/features/products/domain/repositories/product_repository.dart';
+import 'package:injectable/injectable.dart';
 import 'package:kt_dart/collection.dart';
 
+@Injectable(as: ProductRepository)
 class ProductRepositoryImpl implements ProductRepository {
   final ProductRemoteDataSource _remoteDataSource;
 

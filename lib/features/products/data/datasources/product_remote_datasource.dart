@@ -3,11 +3,13 @@ import 'package:demo_ezv_app/core/http_client/api_path.dart';
 import 'package:demo_ezv_app/core/http_client/product_client.dart';
 import 'package:demo_ezv_app/features/products/data/models/product.dart';
 import 'package:dio/dio.dart';
+import 'package:injectable/injectable.dart';
 
 abstract class ProductRemoteDataSource {
   Future<List<ProductModel>?> fetchProducts();
 }
 
+@Injectable(as: ProductRemoteDataSource)
 class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
   final ProductClient _client;
 
