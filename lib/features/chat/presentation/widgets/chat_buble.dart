@@ -22,6 +22,7 @@ class ChatBuble extends HookWidget {
     final showReaction = useState(false);
 
     return GestureDetector(
+      onTap: () => showReaction.value = false,
       onDoubleTap:
           isSender ? null : () => showReaction.value = !showReaction.value,
       child: Stack(
