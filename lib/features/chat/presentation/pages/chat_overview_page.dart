@@ -5,6 +5,7 @@ import 'package:demo_ezv_app/features/chat/presentation/bloc/loader/chat_loader_
 import 'package:demo_ezv_app/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kt_dart/collection.dart';
 
 import '../../../../shared/toast.dart';
 import '../widgets/chat_buble.dart';
@@ -51,8 +52,17 @@ class ChatOverviewPage extends StatelessWidget implements AutoRouteWrapper {
           listener: (context, state) {
             state.maybeMap(
               orElse: () {},
-              addReactionSuccess: (value) {
+              addReactionSuccess: (_) {
                 showToast(context, title: const Text('Reaction added'));
+                context
+                    .read<ChatLoaderBloc>()
+                    .add(ChatLoaderEvent.fetched(roomId));
+              },
+              clearSuccess: (_) {
+                showToast(
+                  context,
+                  title: const Text('Clear all chat success'),
+                );
                 context
                     .read<ChatLoaderBloc>()
                     .add(ChatLoaderEvent.fetched(roomId));
@@ -72,9 +82,9 @@ class ChatOverviewPage extends StatelessWidget implements AutoRouteWrapper {
                 );
               }
 
-              final messages = state.messages;
+              final messages = state.messages.reversed();
               return ListView.separated(
-                shrinkWrap: true,
+                reverse: true,
                 itemCount: messages.size,
                 separatorBuilder: (BuildContext context, int index) {
                   return const SizedBox(
@@ -112,7 +122,9 @@ class ChatOverviewPage extends StatelessWidget implements AutoRouteWrapper {
                 ),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () => context
+                    .read<ChatActorBloc>()
+                    .add(const ChatActorEvent.chatCleared()),
                 icon: const Icon(Icons.delete),
               ),
             ],

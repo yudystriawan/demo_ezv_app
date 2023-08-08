@@ -7,4 +7,5 @@ abstract class ChatLocalDataSource {
     required String reaction,
   });
   Future<void> insert(ChatModel chat);
+  Future<void> clear();
 }

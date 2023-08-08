@@ -9,6 +9,7 @@ Future<void> main() async {
   configureDependencies();
 
   await Hive.initFlutter();
+  await Hive.deleteFromDisk();
   Hive.registerAdapter(QueryModelAdapter());
   Hive.registerAdapter(ChatModelAdapter());
   Hive.registerAdapter(RoomChatModelAdapter());

@@ -16,6 +16,12 @@ class ChatLocalDataSourceImpl implements ChatLocalDataSource {
   }
 
   @override
+  Future<void> clear() async {
+    final box = await _openChatBox();
+    await box.clear();
+  }
+
+  @override
   Future<void> addReaction({
     required String chatId,
     required String reaction,

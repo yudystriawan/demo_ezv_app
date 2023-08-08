@@ -66,4 +66,17 @@ class ChatRepositoryImpl implements ChatRepository {
       return left(const Failure.unexpectedError());
     }
   }
+
+  @override
+  Future<Either<Failure, Unit>> clearLocal() async {
+    try {
+      await _localDataSource.clear();
+
+      return right(unit);
+    } on Failure catch (e) {
+      return left(e);
+    } catch (e) {
+      return left(const Failure.unexpectedError());
+    }
+  }
 }

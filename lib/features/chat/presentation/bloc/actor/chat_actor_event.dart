@@ -6,4 +6,5 @@ class ChatActorEvent with _$ChatActorEvent {
     required String chatId,
     required String reaction,
   }) = _ReactionAdded;
+  const factory ChatActorEvent.chatCleared() = _ChatCleared;
 }

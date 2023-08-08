@@ -14,4 +14,5 @@ abstract class ChatRepository {
     required String reaction,
   });
   Future<Either<Failure, KtList<Chat>>> getMessages(String roomId);
+  Future<Either<Failure, Unit>> clearLocal();
 }
