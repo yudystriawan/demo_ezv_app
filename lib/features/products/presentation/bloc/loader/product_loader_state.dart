@@ -2,9 +2,16 @@ part of 'product_loader_bloc.dart';
 
 @freezed
 class ProductLoaderState with _$ProductLoaderState {
-  const factory ProductLoaderState.initial() = _Initial;
-  const factory ProductLoaderState.loadFailure(Failure failure) = _LoadFailure;
-  const factory ProductLoaderState.loadInProgress() = _LoadInProgress;
-  const factory ProductLoaderState.loadSuccess(KtList<Product> products) =
-      _LoadSuccess;
+  const factory ProductLoaderState({
+    required KtList<Product> products,
+    required KtList<Product> favoriteProducts,
+    required Option<Failure> failureOption,
+    @Default(false) bool isLoading,
+  }) = _ProductLoaderState;
+
+  factory ProductLoaderState.initial() => ProductLoaderState(
+        products: const KtList.empty(),
+        favoriteProducts: const KtList.empty(),
+        failureOption: none(),
+      );
 }

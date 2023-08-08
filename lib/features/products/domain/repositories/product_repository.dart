@@ -8,4 +8,5 @@ abstract class ProductRepository {
   Future<Either<Failure, KtList<Product>>> getProducts();
   Future<Either<Failure, KtList<Product>>> getFavoriteProducts();
   Future<Either<Failure, Unit>> addFavorite(Product product);
+  Future<Either<Failure, Unit>> removeFavorite(String productId);
 }

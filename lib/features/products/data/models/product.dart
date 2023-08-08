@@ -1,3 +1,4 @@
+import 'package:demo_ezv_app/features/products/data/datasources/hive/query_model.dart';
 import 'package:demo_ezv_app/features/products/domain/entities/product/product.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:kt_dart/collection.dart';
@@ -41,6 +42,22 @@ class ProductModel with _$ProductModel {
     );
   }
 
+  factory ProductModel.fromLocal(QueryModel entity) {
+    return ProductModel(
+      id: entity.id,
+      title: entity.title,
+      description: entity.description,
+      price: entity.price,
+      discountPercentage: entity.discountPercentage,
+      rating: entity.rating,
+      stock: entity.stock,
+      brand: entity.brand,
+      category: entity.category,
+      thumbnail: entity.thumbnail,
+      images: entity.images,
+    );
+  }
+
   Product toDomain() {
     final empty = Product.empty();
 
@@ -56,6 +73,22 @@ class ProductModel with _$ProductModel {
       category: category ?? empty.category,
       thumbnailUrl: thumbnail ?? empty.thumbnailUrl,
       urlImages: images?.toImmutableList() ?? empty.urlImages,
+    );
+  }
+
+  QueryModel toLocal() {
+    return QueryModel(
+      id: id,
+      title: title,
+      description: description,
+      price: price,
+      discountPercentage: discountPercentage,
+      rating: rating,
+      stock: stock,
+      brand: brand,
+      category: category,
+      thumbnail: thumbnail,
+      images: images,
     );
   }
 }

@@ -9,19 +9,15 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../bloc/favorite_actor/product_actor_bloc.dart';
 import '../bloc/loader/product_loader_bloc.dart';
 
-class ListProductWidget extends StatelessWidget {
-  const ListProductWidget({super.key});
+class ListFavoriteProductWidget extends StatelessWidget {
+  const ListFavoriteProductWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ProductLoaderBloc, ProductLoaderState>(
-      buildWhen: (p, c) =>
-          p.isLoading != c.isLoading ||
-          p.favoriteProducts != c.favoriteProducts,
+      buildWhen: (p, c) => p.isLoading != c.isLoading,
       builder: (context, state) {
-        final products = state.products;
-        final favoriteProducts = state.favoriteProducts;
-
+        final products = state.favoriteProducts;
         return MasonryGridView.count(
           crossAxisCount: 2,
           itemCount: products.size,
@@ -29,16 +25,7 @@ class ListProductWidget extends StatelessWidget {
           crossAxisSpacing: 10,
           itemBuilder: (context, index) {
             final product = products[index];
-            bool isFavorite = false;
-
-            // check this product contain in favorite products
-            if (favoriteProducts.contains(product)) {
-              isFavorite = true;
-            }
-            return ProductItemWidget(
-              product: product,
-              isFavorite: isFavorite,
-            );
+            return ProductItemWidget(product: product);
           },
         );
       },
@@ -50,11 +37,9 @@ class ProductItemWidget extends StatelessWidget {
   const ProductItemWidget({
     Key? key,
     required this.product,
-    this.isFavorite = false,
   }) : super(key: key);
 
   final Product product;
-  final bool isFavorite;
 
   @override
   Widget build(BuildContext context) {
@@ -124,19 +109,12 @@ class ProductItemWidget extends StatelessWidget {
           alignment: Alignment.topLeft,
           child: IconButton(
             onPressed: () {
-              if (isFavorite) {
-                context
-                    .read<ProductActorBloc>()
-                    .add(ProductActorEvent.productRemoved(product.id));
-                return;
-              }
-
               context
                   .read<ProductActorBloc>()
-                  .add(ProductActorEvent.productAdded(product));
+                  .add(ProductActorEvent.productRemoved(product.id));
             },
-            icon: Icon(
-              isFavorite ? Icons.favorite : Icons.favorite_outline,
+            icon: const Icon(
+              Icons.favorite,
               color: Colors.amber,
             ),
           ),

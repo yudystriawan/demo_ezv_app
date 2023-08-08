@@ -22,40 +22,60 @@ class ProductLoaderBloc extends Bloc<ProductLoaderEvent, ProductLoaderState> {
   ProductLoaderBloc(
     this._getProducts,
     this._getFavoriteProducts,
-  ) : super(const ProductLoaderState.initial()) {
+  ) : super(ProductLoaderState.initial()) {
     on<_Fetched>(_onFetched);
     on<_FavoriteFetched>(_onFavoriteFetched);
-  }
-
-  Future<ProductLoaderState> _onFetchToState(ProductLoaderEvent event) async {
-    late Either<Failure, KtList<Product>> failureOrSuccess;
-    if (event is _FavoriteFetched) {
-      failureOrSuccess = await _getFavoriteProducts(const NoParams());
-    } else {
-      failureOrSuccess = await _getProducts(const NoParams());
-    }
-
-    return failureOrSuccess.fold(
-      (failure) => ProductLoaderState.loadFailure(failure),
-      (products) => ProductLoaderState.loadSuccess(products),
-    );
   }
 
   void _onFetched(
     _Fetched event,
     Emitter<ProductLoaderState> emit,
   ) async {
-    emit(const ProductLoaderState.loadInProgress());
+    emit(state.copyWith(
+      isLoading: true,
+      failureOption: none(),
+      favoriteProducts: const KtList.empty(),
+    ));
 
-    emit(await _onFetchToState(event));
+    final failureOrSuccess = await _getProducts(const NoParams());
+
+    ProductLoaderState newState = state.copyWith(isLoading: false);
+
+    emit(await failureOrSuccess.fold(
+      (f) async => newState.copyWith(failureOption: optionOf(f)),
+      (products) async {
+        newState = newState.copyWith(products: products);
+
+        // get favoriteProducts
+        final failureOrSuccess = await _getFavoriteProducts(const NoParams());
+
+        return failureOrSuccess.fold(
+          (f) => newState.copyWith(failureOption: optionOf(f)),
+          (favoriteProducts) =>
+              newState.copyWith(favoriteProducts: favoriteProducts),
+        );
+      },
+    ));
   }
 
   void _onFavoriteFetched(
     _FavoriteFetched event,
     Emitter<ProductLoaderState> emit,
   ) async {
-    emit(const ProductLoaderState.loadInProgress());
+    emit(state.copyWith(
+      isLoading: true,
+      failureOption: none(),
+      favoriteProducts: const KtList.empty(),
+    ));
 
-    emit(await _onFetchToState(event));
+    final failureOrSuccess = await _getFavoriteProducts(const NoParams());
+
+    emit(failureOrSuccess.fold(
+      (f) => state.copyWith(failureOption: optionOf(f), isLoading: false),
+      (favoriteProducts) => state.copyWith(
+        favoriteProducts: favoriteProducts,
+        isLoading: false,
+      ),
+    ));
   }
 }
