@@ -1,6 +1,8 @@
+import 'package:demo_ezv_app/injection.dart';
 import 'package:flutter/material.dart';
 
 void main() {
+  configureDependencies();
   runApp(const MyApp());
 }
 
