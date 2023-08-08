@@ -1,12 +1,12 @@
 import 'package:dio/dio.dart';
 
 class BaseHttpClient with DioMixin implements Dio {
-  final String baseUrl;
+  final String? baseUrl;
 
   BaseHttpClient({
-    required this.baseUrl,
+    this.baseUrl,
   }) {
-    options = options.copyWith(baseUrl: baseUrl);
+    options = BaseOptions(baseUrl: baseUrl ?? '');
     httpClientAdapter = HttpClientAdapter();
   }
 }
